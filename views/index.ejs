@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./stylesheets/style.css">
+</head>
+<body>
+     <div id="main">
+          <button id="joinRoom" onclick="joinRoom()">join new room</button>
+       <div class="conversationArea">
+
+          <div class="messages">
+             <!-- <div class="msg incomingMessage">
+               <div class="username">username</div>
+               <div class="data">hello hi</div>  
+          </div> 
+          <div class="msg outGoingMessage">
+            <div class="username">username</div>
+            <div class="data"> hello hi </div>
+         </div>  -->
+      </div>
+      <div class="inputs">
+        <input type="text" placeholder="Enter message">
+        <button onclick="sendMessage()">send</button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+      var socket = io();
+      let roomName = null;
+
+      const username = prompt('Enter your name')
+         console.log(username);
+
+    function joinRoom() {
+      roomName = prompt('Enter room name');
+      console.log(roomName);
+        socket.emit('joinRoom', roomName)
+    }
+
+    /* 
+    {
+      username:shubham,
+      msg:hello bhai kese ho
+    }
+     */
+    function incomingMessage(message) {
+        document.querySelector('.messages').innerHTML += ` <div class="msg incomingMessage">
+          <div class="username">${message.username}</div>
+          <div class="data"> ${message.msg} </div>
+        </div> `
+    }
+
+    function outGoingMessage(message) {
+      document.querySelector('.messages').innerHTML += ` <div class="msg outGoingMessage">
+          <div class="username">${message.username}</div>
+          <div class="data"> ${message.msg} </div>
+        </div> `
+    }
+
+    function sendMessage() {
+      const msg = document.querySelector('input').value
+
+      const messagePacket = {
+        username: username,
+        msg: msg,
+        roomName: roomName,
+      }
+      outGoingMessage(messagePacket);
+      document.querySelector('input').value = ''
+
+      socket.emit('sony', messagePacket);
+
+    }
+  
+    socket.on('max', msg=>{
+        incomingMessage(msg);
+    })
+  </script>
+</body>
+</html>
